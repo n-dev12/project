@@ -1,0 +1,319 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Smart Analyzer</title>
+
+<link rel="stylesheet"
+href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css">
+
+<link rel="stylesheet"
+href="{{ url_for('static', filename='style.css') }}">
+
+<script src="https://cdn.jsdelivr.net/npm/three@0.134/build/three.min.js"></script>
+
+</head>
+
+<body>
+
+<div id="bg3d"></div>
+
+<!-- NAVBAR -->
+
+<nav class="nav">
+
+  <div class="logo">
+    <i class="fa-solid fa-brain"></i>
+    أفحص كودك بذكاء
+  </div>
+
+  <div class="nav-links">
+    <a href="#features">المميزات</a>
+    <a href="#app">ابدأ</a>
+  </div>
+
+</nav>
+
+<!-- HERO -->
+
+<section class="hero">
+
+  <h1>CodeScanner AI ⚡</h1>
+
+  <h2>ماسح الكود الذكي</h2>
+
+  <p>
+    اكتشف الأخطاء والثغرات خلال ثواني باستخدام نظام ذكي
+  </p>
+
+  <button onclick="scrollToApp()">
+    ابدأ الآن
+  </button>
+
+  <!-- PREVIEW -->
+
+  <div class="code-preview">
+
+    <div class="code-header">
+      <span class="dot red"></span>
+      <span class="dot yellow"></span>
+      <span class="dot green"></span>
+    </div>
+
+    <pre><code id="typingCode"></code></pre>
+
+  </div>
+
+</section>
+
+<!-- FEATURES -->
+
+<section class="features" id="features">
+
+  <div class="f-card">
+    <i class="fa-solid fa-code fa-2x"></i>
+
+    <h3>تحليل الكود</h3>
+
+    <p>
+      تحليل ذكي يشرح الكود
+    </p>
+  </div>
+
+  <div class="f-card">
+    <i class="fa-solid fa-shield-halved fa-2x"></i>
+
+    <h3>فحص الأمان</h3>
+
+    <p>
+      اكتشاف الثغرات
+    </p>
+  </div>
+
+  <div class="f-card">
+    <i class="fa-solid fa-bolt fa-2x"></i>
+
+    <h3>سرعة عالية</h3>
+
+    <p>
+      تحليل فوري
+    </p>
+  </div>
+
+</section>
+
+<!-- APP -->
+
+<section id="app" class="app">
+
+<form method="post" enctype="multipart/form-data">
+
+  <!-- FILE -->
+
+  <div class="box">
+
+    <h3>
+      <i class="fa-solid fa-file"></i>
+      رفع ملف
+    </h3>
+
+    <div class="upload-box">
+
+      <input
+      type="file"
+      name="file"
+      id="fileInput"
+      hidden
+      accept=".txt,.py,.js,.html,.css,.json,.xml,.csv,.md,.pdf,.docx">
+
+      <label for="fileInput" class="upload-area">
+
+        <div class="upload-icon">
+          <i class="fa-solid fa-plus"></i>
+        </div>
+
+        <p class="upload-title">
+          اختر ملفك
+        </p>
+
+        <p class="upload-sub">
+          أو اسحب الملف هنا
+        </p>
+
+        <small>
+          TXT, PDF, DOCX, PY, JS, HTML...
+        </small>
+
+      </label>
+
+    </div>
+
+  </div>
+
+  <!-- CODE INPUT -->
+
+  <div class="box">
+
+    <h3>
+      <i class="fa-solid fa-code"></i>
+      الصق الكود
+    </h3>
+
+    <textarea
+    name="code_input"
+    id="codeInput"></textarea>
+
+    <p id="count">
+      عدد الأسطر: 0
+    </p>
+
+  </div>
+
+  <!-- BUTTON -->
+
+  <div class="btns-row">
+
+    <button type="submit" class="main-btn">
+      تحليل
+    </button>
+
+  </div>
+
+</form>
+
+<!-- RESULTS -->
+
+{% if code %}
+
+<div class="results">
+
+  <!-- CODE -->
+
+  <div class="card code-card">
+
+    <h3>الكود</h3>
+
+    <pre id="codeContent">{{code}}</pre>
+
+    {% if code|length > 500 %}
+    <button id="toggleBtn" onclick="toggleCode()">
+      عرض المزيد
+    </button>
+    {% endif %}
+
+  </div>
+
+  <!-- AI -->
+
+  <div class="card">
+
+    <h3>التحليل</h3>
+
+    <pre>{{ai}}</pre>
+
+  </div>
+
+  <!-- SECURITY -->
+
+  <div class="card">
+
+    <h3>الأمان</h3>
+
+    <pre>{{security}}</pre>
+
+  </div>
+
+</div>
+
+{% endif %}
+
+<!-- DETAILS -->
+
+<div class="details">
+
+  <div class="d-card">
+    <i class="fa-solid fa-code"></i>
+
+    <h3>تحليل الكود</h3>
+
+    <p>
+      تحليل بنية الكود واستخراج معلومات مثل عدد الأسطر والدوال والحلقات.
+    </p>
+  </div>
+
+  <div class="d-card">
+    <i class="fa-solid fa-chart-simple"></i>
+
+    <h3>إحصائيات الكود</h3>
+
+    <p>
+      عرض عدد الكلمات والأحرف وتفاصيل تساعد على فهم حجم وتعقيد الكود.
+    </p>
+  </div>
+
+  <div class="d-card">
+    <i class="fa-solid fa-cubes"></i>
+
+    <h3>مكونات الكود</h3>
+
+    <p>
+      حساب عدد الدوال والكلاسات والشروط والحلقات داخل الكود.
+    </p>
+  </div>
+
+  <div class="d-card">
+    <i class="fa-solid fa-shield-halved"></i>
+
+    <h3>فحص الأمان</h3>
+
+    <p>
+      اكتشاف أوامر خطرة مثل eval و exec و subprocess.
+    </p>
+  </div>
+
+  <div class="d-card">
+    <i class="fa-solid fa-file"></i>
+
+    <h3>دعم الملفات</h3>
+
+    <p>
+      قراءة ملفات متعددة مثل TXT و PDF و DOCX وتحليل محتواها.
+    </p>
+  </div>
+
+</div>
+
+</section>
+
+<!-- SCRIPTS -->
+
+<script>
+
+function scrollToApp(){
+ document.getElementById("app")
+ .scrollIntoView({behavior:"smooth"});
+}
+
+function toggleCode(){
+
+ const card = document.querySelector(".code-card");
+ const btn = document.getElementById("toggleBtn");
+
+ card.classList.toggle("expanded");
+
+ if(card.classList.contains("expanded")){
+   btn.innerText = "عرض أقل";
+ }else{
+   btn.innerText = "عرض المزيد";
+ }
+
+}
+
+</script>
+
+<script src="{{ url_for('static', filename='script.js') }}"></script>
+
+</body>
+</html>
